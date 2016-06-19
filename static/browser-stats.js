@@ -140,7 +140,7 @@ var BrowserStats = (function() {
 
   var load = function(type, callback) {
     callback = callback || function() {};
-    $.get("data.json").success(function(data) { parse(type, data, callback); });
+    $.get("data.json?1").success(function(data) { parse(type, data, callback); });
   };
  
   var browsers = new Browsers();
