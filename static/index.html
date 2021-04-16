@@ -252,7 +252,8 @@
           $("#charts").addClass(deviceType);
           $("#usertype").text(deviceType);
 
-      BrowserStats.load(deviceType, function(browsers) {
+      BrowserStats.load(deviceType, function() {
+        let browsers = BrowserStats.browsers;
         var features = browsers.features;
         _.each(features, function(itm, idx) { itm.id = idx });
         var feats = _.sortBy(_.keys(features), function(itm) { return itm; });
