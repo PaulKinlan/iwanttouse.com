@@ -1,50 +1,42 @@
 var BrowserStats = (function() {
-  var Browser = function(key, agent) {
-    var _agent = agent;
-    var _Share;
 
-    Object.defineProperty(this, "browser", {
-      "get": function() {
-        return _agent.browser;
-      }
-    });
+  class Browser {
+    constructor(key, agent) {
+      this.agent = agent;
+      this.key = key;
+      this._totalShare = Object.values(agent.usage_global).reduce((memo, num) => memo + num, 0);
+    }
 
-    Object.defineProperty(this, "share", {
-      "get": function() {
-        return _agent.usage_global;
-      }
-    });
+    get browser() {
+      return this.agent.browser;
+    }
 
-    Object.defineProperty(this, "type", {
-      "get": function() {
-        return _agent.type;
-      }
-    });
-    
-    Object.defineProperty(this, "versionKeys", {
-      "get": function() {
-        var versions = [];
-        for(var v in _agent.versions) {
-          if(!!_agent.versions[v]) {
-            versions.push(key + "+" + _agent.versions[v]);
-          } 
+    get share() {
+      return this.agent.share;
+    }
 
+    get type() {
+      return this.agent.type;
+    }
+
+    get versionKeys() {
+      let versions = [];
+      for (let v in this.agent.versions) {
+        if (!!this.agent.versions[v]) {
+          versions.push(this.key + "+" + this.agent.versions[v]);
         }
-        return versions;
       }
-    });
+      return versions;
+    }
 
-    this.getVersionShare = function(version) {
-      return _agent.usage_global[version] || 0;
-    }; 
+    get totalShare() {
+      return this._totalShare;
+    }
 
-    Object.defineProperty(this, "totalShare", {
-      "get": function() {
-        if(!!_Share == false) _Share = _.reduce(_agent.usage_global, function(memo, num){ return memo + num }, 0);
-        return _Share;
-      }
-    });
-  };
+    getVersionShare = function (version) {
+      return this.agent.usage_global[version] || 0;
+    };
+  }
 
   var Browsers = function () {
     var _agents = {};
