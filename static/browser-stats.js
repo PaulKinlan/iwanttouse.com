@@ -158,29 +158,6 @@ var BrowserStats = (function() {
 
     callback(browsers);
   };
-
-  var intersect = function() {
-    var itemCount = arguments.length;
-    var items = {};
-    
-    for(var i in arguments) {
-      // invert the list.
-      var arg = arguments[i];
-      for(var a in arg) {
-        if(!!items[a] == false) items[a] = 0;
-        items[a]++;
-      }
-    }
-     
-    var output = [];    
-
-    for(var i in items) {
-      if(items[i] == itemCount) output.push(i);
-    }
-
-    return output;
-  };
-
   var returnObject = {
 	load: load,
 	browsers: function(type) {
