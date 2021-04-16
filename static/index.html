@@ -219,20 +219,22 @@
   <script src="components/underscore/underscore-min.js"></script>
   <script>
 
+    let browserStats;
+
     var bindFeatureDataList = function(features, required, onItem, sumCurrent) {
       var onItem = onItem || function() {};
-      var supportedByCurrent = BrowserStats.browsers.browsersByFeature(required, ["y", "y x", "a", "a x"]);
+      var supportedByCurrent = browserStats.browsersByFeature(required, ["y", "y x", "a", "a x"]);
       //var sumCurrent = _.reduce(supportedByCurrent, function(memo, num){ return memo + num.share; }, 0);
       $("#featureList").html("");
       $("#free").html("");
       for(var i in features) {
-        var supportedBy = BrowserStats.browsers.browsersByFeature(required.concat(i), ["y", "y x", "a", "a x"]);
+        var supportedBy = browserStats.browsersByFeature(required.concat(i), ["y", "y x", "a", "a x"]);
 	var sum = _.reduce(supportedBy, function(memo, num){ return memo + num.share; }, 0);
         var difference = (sum / sumCurrent) * 100;
         var actual = sumCurrent - sum;
     
         $("#featureList").append("<option value='" + i  + "'>" +  difference.toFixed(2)  + "%</option>");
-        onItem({"id": i, "title": BrowserStats.browsers.getFeature(i).title, "difference": difference, "actual": sum});
+        onItem({"id": i, "title": browserStats.getFeature(i).title, "difference": difference, "actual": sum});
       }
     };
 
@@ -246,14 +248,14 @@
     }
 
     $(function() {
-	  var deviceType = "all";
-	  deviceType = window.location.host.indexOf("onmobile") == 0 ? "mobile": deviceType;
+	    var deviceType = "all";
+	    deviceType = window.location.host.indexOf("onmobile") == 0 ? "mobile": deviceType;
   	  deviceType = window.location.host.indexOf("ondesktop") == 0 ? "desktop": deviceType;
           $("#charts").addClass(deviceType);
           $("#usertype").text(deviceType);
 
-      BrowserStats.load(deviceType, function() {
-        let browsers = BrowserStats.browsers;
+      BrowserStats.load(deviceType).then(browsers => {
+        browserStats = browsers;
         var features = browsers.features;
         _.each(features, function(itm, idx) { itm.id = idx });
         var feats = _.sortBy(_.keys(features), function(itm) { return itm; });
@@ -264,8 +266,8 @@
       
         var updateShare = function(requiredFeatures) {
           if(!!requiredFeatures === false)  return;
-          var total = BrowserStats.browsers.browsersByFeature([], ["y", "y x", "a", "a x"]);
-          var supportedBy = BrowserStats.browsers.browsersByFeature(requiredFeatures, ["y", "y x", "a", "a x"]);
+          var total = browserStats.browsersByFeature([], ["y", "y x", "a", "a x"]);
+          var supportedBy = browserStats.browsersByFeature(requiredFeatures, ["y", "y x", "a", "a x"]);
 
           var sum = _.reduce(supportedBy, function(memo, num){ return memo + num.share; }, 0);
           var totalSum = _.reduce(total, function(memo, num){ return memo + num.share; }, 0);
@@ -276,7 +278,7 @@
           drawTable("#totalShare",["name", "since", "share"], supportedBy);
           drawPie("#totalShareChart",["name", "since", "share"], supportedBy);
           
-          var mobileDesktopSplitData = BrowserStats.browsers.typesByFeature(requiredFeatures, ["y", "y x", "a", "a x"]);
+          var mobileDesktopSplitData = browserStats.typesByFeature(requiredFeatures, ["y", "y x", "a", "a x"]);
           drawTable("#mobileDesktopSplit",["name", "share"], mobileDesktopSplitData); 
           drawPie("#mobileDesktopSplitChart",["name", "share"], mobileDesktopSplitData); 
         };
@@ -287,7 +289,7 @@
           }
           else {
             $("#usedFeatures ul").html(_.map(requiredFeatures, function(i) {
-               var item = BrowserStats.browsers.getFeature(i);
+               var item = browserStats.getFeature(i);
                return "<li><input data-feature='" + item.id +  "' type='checkbox' id='" + item.id + "usedchk'/><label for='" + item.id + "usedchk'>" + item.title + "</label>"
             }).join(""));
           }

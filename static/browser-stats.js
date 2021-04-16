@@ -149,9 +149,9 @@ class Browsers {
 }
 let BrowserStatsInstance;
 class BrowserStats {
-  static load(type, callback) {
-    callback = callback || function () {};
-    fetch("data.json")
+  // load the Browser stats, returns a promise.
+  static load(type) {
+    return fetch("data.json")
       .then(response => response.json())
       .then(data => {
         let validAgents = {};
@@ -172,13 +172,8 @@ class BrowserStats {
           }
           BrowserStats.browsers.addFeature(i, feature);
         }
-
-        callback();
+        
+        return BrowserStats.browsers;
       });
-  }
-
-  static get browsers() {
-    // lazy singleton
-    return BrowserStatsInstance = (BrowserStatsInstance ? BrowserStatsInstance : new Browsers());
   }
 }
