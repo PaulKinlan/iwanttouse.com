@@ -147,17 +147,17 @@ class Browsers {
     return this._features[featureName];
   }
 }
-let BrowserStatsInstance;
 class BrowserStats {
   // load the Browser stats, returns a promise.
   static load(type) {
     return fetch("data.json")
       .then(response => response.json())
       .then(data => {
+        let browsers = new Browsers();
         let validAgents = {};
         for (let a in data.agents) {
           if (type == "all" || type == data.agents[a].type) {
-            BrowserStats.browsers.addBrowser(a, data.agents[a]);
+            browsers.addBrowser(a, data.agents[a]);
             validAgents[a] = true;
           }
         }
@@ -170,10 +170,10 @@ class BrowserStats {
               feature.stats[a] = undefined;
             }
           }
-          BrowserStats.browsers.addFeature(i, feature);
+          browsers.addFeature(i, feature);
         }
         
-        return BrowserStats.browsers;
+        return browsers;
       });
   }
 }
