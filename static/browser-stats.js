@@ -38,45 +38,45 @@ var BrowserStats = (function() {
     };
   }
 
-  var Browsers = function () {
-    var _agents = {};
-    var _features = {};
+  class Browsers {
+    constructor() {
+      this._agents = {};
+      this._features = {};
+    }
 
-    this.__defineGetter__("features", function() {
-      return _features;
-    });
+    get features() {
+      return this._features;
+    }
 
-    this.addBrowser = function(a, agent) {
-      _agents[a] = new Browser(a, agent);
+    addBrowser(a, agent) {
+      this._agents[a] = new Browser(a, agent);
     };
 
-
-
-    this.getBrowser = function(key) {
+    getBrowser(key) {
       var ua = key.split("+");
-      var agent = _agents[ua[0]];
+      var agent = this._agents[ua[0]];
       return { "key": key, "version": ua[1], "type": agent.type, "name": agent.browser , "browserShare": agent.getVersionShare(ua[1]) };
+    }
+
+    addFeature(feature, versions) {
+      this._features[feature] = versions;
     };
 
-    this.addFeature = function(feature, versions) {
-      _features[feature] = versions;
-    };
-
-    this.getByFeature = function(features, states) {
-      var output = [];
+    getByFeature(features, states) {
+      let output = [];
       if(!!features == false || features.length === 0) {
         // get every single browser and version
-        var agents = [];
-        for(var a in _agents) {
-          agents = agents.concat(_agents[a].versionKeys);
+        let agents = [];
+        for(let a in this._agents) {
+          agents = agents.concat(this._agents[a].versionKeys);
         }
         output.push(agents); 
       }
       else {
-        for(var f = 0; f < features.length; f++) {
+        for(let f = 0; f < features.length; f++) {
           output.push([]);
-          var feat = features[f];
-          var feature = _features[feat];
+          let feat = features[f];
+          let feature = this._features[feat];
           for(var b in feature.stats) {
             for(var v in feature.stats[b]) { 
               var present = feature.stats[b][v];
@@ -88,9 +88,9 @@ var BrowserStats = (function() {
         }
       }
 
-      var browser_vers = _.intersection.apply(this,output);
-      var self = this;
-      var aggregates = _.groupBy(browser_vers, function(i) { 
+      let browser_vers = _.intersection.apply(this,output);
+      let self = this;
+      let aggregates = _.groupBy(browser_vers, function(i) { 
         return self.getBrowser(i).name;
       });
 
@@ -100,17 +100,17 @@ var BrowserStats = (function() {
         b._versions = _.map(aggregates[b.name], function(r) {return parseInt(r.split('+')[1].split("-")[0])});
         return b;
       });
+    }
+
+    browsersByFeature(features, states) {
+      return this.featuresByProperty(features, states, "name"); 
     };
 
-    this.browsersByFeature = function(features, states) {
-      return featuresByProperty.call(this, features, states, "name"); 
+    typesByFeature(features, states) {
+      return this.featuresByProperty(features, states, "type"); 
     };
 
-    this.typesByFeature =  function(features, states) {
-      return featuresByProperty.call(this, features, states, "type"); 
-    };
-
-    var featuresByProperty = function(features, states, property) {
+    featuresByProperty(features, states, property) {
       var supportedBy = this.getByFeature(features, states);
       return _.map(
         _.groupBy(supportedBy, function(i) { return i[property] }), 
@@ -124,11 +124,10 @@ var BrowserStats = (function() {
           });
     };
 
-    this.getFeature = function(featureName) {
-      return _features[featureName];
-
-    };
-  }; 
+    getFeature(featureName) {
+      return this._features[featureName];
+    }
+  }
 
   var load = function(type, callback) {
     callback = callback || function() {};
