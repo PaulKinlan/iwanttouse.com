@@ -33,7 +33,7 @@ var BrowserStats = (function() {
       return this._totalShare;
     }
 
-    getVersionShare = function (version) {
+    getVersionShare(version) {
       return this.agent.usage_global[version] || 0;
     };
   }
