@@ -151,28 +151,30 @@ let BrowserStatsInstance;
 class BrowserStats {
   static load(type, callback) {
     callback = callback || function () {};
-    $.get("data.json?1").success(function (data) {
-      let validAgents = {};
-      for (let a in data.agents) {
-        if (type == "all" || type == data.agents[a].type) {
-          BrowserStats.browsers.addBrowser(a, data.agents[a]);
-          validAgents[a] = true;
-        }
-      }
-
-      for (let i in data.data) {
-        // Remove agents that are not part of the viewed set.
-        let feature = data.data[i];
-        for (let a in feature.stats) {
-          if (!!validAgents[a] == false) {
-            feature.stats[a] = undefined;
+    fetch("data.json")
+      .then(response => response.json())
+      .then(data => {
+        let validAgents = {};
+        for (let a in data.agents) {
+          if (type == "all" || type == data.agents[a].type) {
+            BrowserStats.browsers.addBrowser(a, data.agents[a]);
+            validAgents[a] = true;
           }
         }
-        BrowserStats.browsers.addFeature(i, feature);
-      }
 
-      callback();
-    });
+        for (let i in data.data) {
+          // Remove agents that are not part of the viewed set.
+          let feature = data.data[i];
+          for (let a in feature.stats) {
+            if (!!validAgents[a] == false) {
+              feature.stats[a] = undefined;
+            }
+          }
+          BrowserStats.browsers.addFeature(i, feature);
+        }
+
+        callback();
+      });
   }
 
   static get browsers() {
