@@ -1,3 +1,29 @@
+const intersectionOf = (arrays) => {
+  if (arrays.length == 1) return [...new Set(arrays[0])];
+  if (arrays.length < 2) throw "not enough inputs";
+  
+  const output = new Set();
+  for(let i = 1; i < arrays.length; i++) {
+    for(let item of arrays[i-1]) {
+      if(arrays[i].indexOf(item) > -1) output.add(item);
+    }
+  }
+
+  return [...output];
+};
+
+const groupBy = (array, func) => {
+  const output = {};
+  for(let item of array) {
+    const key = func(item);
+    if (key in output == false) {
+      output[key] = []; 
+    }
+    output[key].push(item);
+  }
+  return output;
+}
+
 class Browser {
   constructor(key, agent) {
     this.agent = agent;
@@ -79,33 +105,31 @@ class Browsers {
       }
       output.push(agents);
     } else {
-      for (let f = 0; f < features.length; f++) {
-        output.push([]);
-        let feat = features[f];
-        let feature = this._features[feat];
-        for (var b in feature.stats) {
-          for (var v in feature.stats[b]) {
-            var present = feature.stats[b][v];
+      for (let featureName of features) {
+        output[featureName] = [];
+        let feature = this._features[featureName];
+        for (let b in feature.stats) {
+          for (let v in feature.stats[b]) {
+            let present = feature.stats[b][v];
             if (states.indexOf(present) > -1) {
-              output[f].push(b + "+" + v);
+              output[featureName].push(b + "+" + v);
             }
           }
         }
       }
     }
 
-    let browser_vers = _.intersection.apply(this, output);
-    let self = this;
-    let aggregates = _.groupBy(browser_vers, function (i) {
-      return self.getBrowser(i).name;
+    let browser_vers = intersectionOf(Object.values(output));
+    let aggregates = groupBy(browser_vers, (i) => {
+      return this.getBrowser(i).name;
     });
 
-    return _.map(browser_vers, function (i) {
-      var b = self.getBrowser(i);
-      b.versions = _.map(aggregates[b.name], function (r) {
+    return browser_vers.map((i) => {
+      var b = this.getBrowser(i);
+      b.versions = aggregates[b.name].map((r) => {
         return r.split("+")[1];
       });
-      b._versions = _.map(aggregates[b.name], function (r) {
+      b._versions = aggregates[b.name].map((r) => {
         return parseInt(r.split("+")[1].split("-")[0]);
       });
       return b;
@@ -121,25 +145,17 @@ class Browsers {
   }
 
   featuresByProperty(features, states, property) {
-    var supportedBy = this.getByFeature(features, states);
-    return _.map(
-      _.groupBy(supportedBy, function (i) {
-        return i[property];
-      }),
-      function (i) {
-        return {
+    let supportedBy = this.getByFeature(features, states);
+    let browserSupport = groupBy(supportedBy, (i) => {
+      return i[property];
+    });
+    return Object.values(browserSupport).map(
+       (i) => ({
           name: i[0][property],
           versions: i[0].versions,
-          since: _.min(i[0]._versions),
-          share: _.reduce(
-            i,
-            function (memo, r) {
-              return memo + r.browserShare;
-            },
-            0
-          ),
-        };
-      }
+          since: Math.min(...(i[0]._versions)), // sometimes the version is not a number..
+          share: i.reduce((memo, r) => memo + r.browserShare, 0),
+        })
     );
   }
 

@@ -257,7 +257,6 @@
 <script src="browser-stats.js"></script>
 <script src="components/d3/d3.v2.min.js"></script>
 <script src="components/jquery/jquery.min.js"></script>
-<script src="components/underscore/underscore-min.js"></script>
 <script>
 
   let browserStats;
@@ -265,17 +264,16 @@
   var bindFeatureDataList = function (features, required, onItem, sumCurrent) {
     var onItem = onItem || function () { };
     var supportedByCurrent = browserStats.browsersByFeature(required, ["y", "y x", "a", "a x"]);
-    //var sumCurrent = _.reduce(supportedByCurrent, function(memo, num){ return memo + num.share; }, 0);
     $("#featureList").html("");
     $("#free").html("");
-    for (var i in features) {
-      var supportedBy = browserStats.browsersByFeature(required.concat(i), ["y", "y x", "a", "a x"]);
-      var sum = _.reduce(supportedBy, function (memo, num) { return memo + num.share; }, 0);
+    for (let [featureName, feature] of features) {
+      var supportedBy = browserStats.browsersByFeature(required.concat(featureName), ["y", "y x", "a", "a x"]);
+      var sum = supportedBy.reduce((memo, num) => memo + num.share, 0);
       var difference = (sum / sumCurrent) * 100;
       var actual = sumCurrent - sum;
 
-      $("#featureList").append("<option value='" + i + "'>" + difference.toFixed(2) + "%</option>");
-      onItem({ "id": i, "title": browserStats.getFeature(i).title, "difference": difference, "actual": sum });
+      $("#featureList").append("<option value='" + featureName + "'>" + difference.toFixed(2) + "%</option>");
+      onItem({ "id": featureName, "title": browserStats.getFeature(featureName).title, "difference": difference, "actual": sum });
     }
   };
 
@@ -297,12 +295,10 @@
 
     BrowserStats.load(deviceType).then(browsers => {
       browserStats = browsers;
-      var features = browsers.features;
-      _.each(features, function (itm, idx) { itm.id = idx });
-      var feats = _.sortBy(_.keys(features), function (itm) { return itm; });
-      for (var i = 0; feature = feats[i]; i++) {
-        var feat = features[feats[i]];
-        $("#features").append("<li><input data-feature='" + feat.id + "' type='checkbox' id='" + feat.id + "chk'/><label for='" + feat.id + "chk'>" + feat.title + " <span class=featpct></span></label>");
+      let features = Object.entries(browsers.features);
+      features.sort(([key1, value], [key2, value2]) => key1.localeCompare(key2));
+      for (let [featureId, feature] of features) {
+        $("#features").append("<li><input data-feature='" + featureId + "' type='checkbox' id='" + featureId + "chk'/><label for='" + featureId + "chk'>" + feature.title + " <span class=featpct></span></label>");
       }
 
       var updateShare = function (requiredFeatures) {
@@ -310,8 +306,8 @@
         var total = browserStats.browsersByFeature([], ["y", "y x", "a", "a x"]);
         var supportedBy = browserStats.browsersByFeature(requiredFeatures, ["y", "y x", "a", "a x"]);
 
-        var sum = _.reduce(supportedBy, function (memo, num) { return memo + num.share; }, 0);
-        var totalSum = _.reduce(total, function (memo, num) { return memo + num.share; }, 0);
+        var sum = supportedBy.reduce((memo, num) => memo + num.share, 0);
+        var totalSum = total.reduce((memo, num) => memo + num.share, 0);
         $("#share").css({ "color": "hsla(" + Math.round((90 / 100) * (sum / totalSum * 100)) + ", 100%, 42%, 1)" }).text((sum / totalSum * 100).toFixed(2));
 
         bindFeatureDataList(features, requiredFeatures, buildAdditionalFeatures, sum)
@@ -329,7 +325,7 @@
           $("#usedFeatures ul").html("nothing special");
         }
         else {
-          $("#usedFeatures ul").html(_.map(requiredFeatures, function (i) {
+          $("#usedFeatures ul").html(requiredFeatures.map((i) => {
             var item = browserStats.getFeature(i);
             return "<li><input data-feature='" + item.id + "' type='checkbox' id='" + item.id + "usedchk'/><label for='" + item.id + "usedchk'>" + item.title + "</label>"
           }).join(""));
@@ -343,7 +339,7 @@
         // toggle all the other checkboxes for the same feature 
         $("input[data-feature='" + featureName + "']").prop("checked", (checked) ? "checked" : false);
 
-        var featureList = _.uniq($("input:checked").map(function (val, i) { return $(i).data("feature"); }).toArray());
+        let featureList = [... new Set(Array.from($("input:checked")).map((val) => $(val).data("feature")))];
         window.location.hash = featureList.join(",");
       });
 
@@ -351,19 +347,19 @@
         var urlFeats = getFeatureArrayFromString(window.location.hash.substring(1));
         updateShare(urlFeats);
         updateHeader(urlFeats);
-        $(_.toArray(_.map(urlFeats, function (f) { return "input[data-feature='" + f + "']" })).join()).prop("checked", "checked");
+        $(urlFeats.map((f) => "input[data-feature='" + f + "']").join()).prop("checked", "checked");
       });
 
       var urlFeats = getFeatureArrayFromString(window.location.hash.substring(1));
       updateShare(urlFeats);
       updateHeader(urlFeats);
-      $(_.toArray(_.map(urlFeats, function (f) { return "input[data-feature='" + f + "']" })).join()).prop("checked", "checked");
+      $(urlFeats.map((f) => "input[data-feature='" + f + "']").join()).prop("checked", "checked");
 
       $("#search").on('change', function () {
         if (this.value === "") return;
         var urlFeats = getFeatureArrayFromString(window.location.hash.substring(1));
         urlFeats.push(this.value);
-        $(_.toArray(_.map(urlFeats, function (f) { return "input[data-feature='" + f + "']" })).join()).prop("checked", "checked");
+        $(urlFeats.map((f) => "input[data-feature='" + f + "']").join()).prop("checked", "checked");
         window.location.hash = $("input:checked").map(function (val, i) { return $(i).data("feature"); }).toArray().join(",");
         this.value = ""
       });
