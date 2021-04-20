@@ -127,10 +127,11 @@ class Browsers {
     return browser_vers.map((i) => {
       var b = this.getBrowser(i);
       b.versions = aggregates[b.name].map((r) => {
-        return r.split("+")[1];
-      });
-      b._versions = aggregates[b.name].map((r) => {
-        return parseInt(r.split("+")[1].split("-")[0]);
+        let version = Number.parseFloat(r.split("+")[1]);
+        if (Number.isNaN(version)) {
+          return Infinity;
+        }
+        return version;
       });
       return b;
     });
@@ -153,7 +154,7 @@ class Browsers {
        (i) => ({
           name: i[0][property],
           versions: i[0].versions,
-          since: Math.min(...(i[0]._versions)), // sometimes the version is not a number..
+          since: Math.min(...(i[0].versions)), // sometimes the version is not a number..
           share: i.reduce((memo, r) => memo + r.browserShare, 0),
         })
     );
