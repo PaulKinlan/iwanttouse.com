@@ -273,7 +273,7 @@
       var actual = sumCurrent - sum;
 
       $("#featureList").append("<option value='" + featureName + "'>" + difference.toFixed(2) + "%</option>");
-      onItem({ "id": featureName, "title": browserStats.getFeature(featureName).title, "difference": difference, "actual": sum });
+      onItem({ "id": featureName, "title": feature.title, "difference": difference, "actual": sum });
     }
   };
 
