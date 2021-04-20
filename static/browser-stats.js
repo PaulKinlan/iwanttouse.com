@@ -124,16 +124,10 @@ class Browsers {
       return this.getBrowser(i).name;
     });
 
-    return browser_vers.map((i) => {
-      var b = this.getBrowser(i);
-      b.versions = aggregates[b.name].map((r) => {
-        return r.split("+")[1];
-      });
-      b._versions = aggregates[b.name].map((r) => {
-        return parseInt(r.split("+")[1].split("-")[0]);
-      });
-      return b;
-    });
+    return browser_vers
+      .map((i) => this.getBrowser(i));
+
+
   }
 
   browsersByFeature(features, states) {
@@ -150,12 +144,22 @@ class Browsers {
       return i[property];
     });
     return Object.values(browserSupport).map(
-       (i) => ({
-          name: i[0][property],
-          versions: i[0].versions,
-          since: Math.min(...(i[0]._versions)), // sometimes the version is not a number..
-          share: i.reduce((memo, r) => memo + r.browserShare, 0),
-        })
+       (i) => {
+          let versions = i.map((r) => {
+            let version = Number.parseFloat(r.version);
+            if (Number.isNaN(version)) {
+              return Infinity;
+            }
+            return version;
+          });
+        
+          return {
+            name: i[0][property],
+            versions: versions,
+            since: Math.min(...(versions)), // sometimes the version is not a number..
+            share: i.reduce((memo, r) => memo + r.browserShare, 0),
+          }
+      }
     );
   }
 
