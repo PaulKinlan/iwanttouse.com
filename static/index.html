@@ -261,31 +261,46 @@
 
   let browserStats;
 
-  var bindFeatureDataList = function (features, required, onItem, sumCurrent) {
-    var onItem = onItem || function () { };
-    var supportedByCurrent = browserStats.browsersByFeature(required, ["y", "y x", "a", "a x"]);
-    $("#featureList").html("");
-    $("#free").html("");
+  var bindFeatureDataList = function (features, required, sumCurrent) {
+    const supportedByCurrent = browserStats.browsersByFeature(required, ["y", "y x", "a", "a x"]);
+    
+    const featureListElement = document.getElementById("featureList");
+    const freeListElement = document.getElementById("free");
+    featureListElement.innerHTML = "";
+    freeListElement.innerHTML = "";
+    
+    const featuresFragment = document.createElement('template');
+    const freeFeatureFragment = document.createElement('template');
+    let featuresFragmentHTML = '';
+    let freeFeatureFragmentHTML = '';
+
+    featuresFragment.innerHTML = '';
+    freeFeatureFragment.innerHTML = '';
+
     for (let [featureName, feature] of features) {
       var supportedBy = browserStats.browsersByFeature(required.concat(featureName), ["y", "y x", "a", "a x"]);
       var sum = supportedBy.reduce((memo, num) => memo + num.share, 0);
       var difference = (sum / sumCurrent) * 100;
       var actual = sumCurrent - sum;
 
-      $("#featureList").append("<option value='" + featureName + "'>" + difference.toFixed(2) + "%</option>");
-      onItem({ "id": featureName, "title": feature.title, "difference": difference, "actual": sum });
+      featuresFragmentHTML += `<option value='${featureName}'>${difference.toFixed(2)}%</option>`;
+      if (Math.round(100 - difference) === 0) {
+        freeFeatureFragmentHTML += `<li data-share='${sum}'>
+          <input 
+          data-difference='${difference}' 
+          data-feature='${featureName}' 
+          type='checkbox' id='${featureName}freechk'/>
+          <label for='${featureName}freechk' style='background-color: hsla(${Math.round(difference)}, 100%, 42%, 1)'>${feature.title} <span class=featpct></span></label>`;
+      }
     }
+
+    featuresFragment.innerHTML = featuresFragmentHTML;
+    freeFeatureFragment.innerHTML = freeFeatureFragmentHTML;
+
+    featureListElement.appendChild(featuresFragment.content);
+    freeListElement.appendChild(freeFeatureFragment.content);
+
   };
-
-  var buildAdditionalFeatures = function (item) {
-    // Features that are free.
-    if (Math.round(100 - item.difference) === 0) {
-      $("#free").append("<li data-share='" + item.actual + "'><input data-difference='" + item.difference + "' data-feature='" + item.id + "' type='checkbox' id='" + item.id + "freechk'/><label for='" + item.id + "freechk'>" + item.title + "</label>");
-    }
-    $("input[data-feature='" + item.id + "'] + label").css({ "background-color": "hsla(" + Math.round(item.difference) + ", 100%, 42%, 1)" })
-    $("input[data-feature='" + item.id + "'] + label .featpct").text("(" + item.difference.toFixed(0) + "%)")
-  }
-
   $(function () {
     var deviceType = "all";
     deviceType = window.location.host.indexOf("onmobile") == 0 ? "mobile" : deviceType;
@@ -297,9 +312,17 @@
       browserStats = browsers;
       let features = Object.entries(browsers.features);
       features.sort(([key1, value], [key2, value2]) => key1.localeCompare(key2));
+      const featuresElement = document.getElementById("features");
+      const featuresFragment =  document.createElement('template');
+      let fragmentHTML = ''
+
       for (let [featureId, feature] of features) {
-        $("#features").append("<li><input data-feature='" + featureId + "' type='checkbox' id='" + featureId + "chk'/><label for='" + featureId + "chk'>" + feature.title + " <span class=featpct></span></label>");
+          fragmentHTML += `<li><input data-feature='${featureId}' type='checkbox' id='${featureId}chk'/><label for='${featureId}chk' style='background-color: hsla(${Math.round(100)}, 100%, 42%, 1)'>${feature.title} <span class=featpct></span></label>`;
       }
+
+      featuresFragment.innerHTML = fragmentHTML;
+
+      featuresElement.appendChild(featuresFragment.content);
 
       var updateShare = function (requiredFeatures) {
         if (!!requiredFeatures === false) return;
@@ -310,7 +333,7 @@
         var totalSum = total.reduce((memo, num) => memo + num.share, 0);
         $("#share").css({ "color": "hsla(" + Math.round((90 / 100) * (sum / totalSum * 100)) + ", 100%, 42%, 1)" }).text((sum / totalSum * 100).toFixed(2));
 
-        bindFeatureDataList(features, requiredFeatures, buildAdditionalFeatures, sum)
+        bindFeatureDataList(features, requiredFeatures, sum)
         // Version numbers aren't that interesting here.
         drawTable("#totalShare", ["name", "since", "share"], supportedBy);
         drawPie("#totalShareChart", ["name", "since", "share"], supportedBy);
