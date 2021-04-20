@@ -263,18 +263,18 @@
 
   var bindFeatureDataList = function (features, required, sumCurrent) {
     const supportedByCurrent = browserStats.browsersByFeature(required, ["y", "y x", "a", "a x"]);
-    
+
     const featureListElement = document.getElementById("featureList");
     const featuresElement = document.getElementById("features");
     const freeListElement = document.getElementById("free");
     featureListElement.innerHTML = "";
     freeListElement.innerHTML = "";
     featuresElement.innerHTML = "";
-    
+
     const featuresListFragment = document.createElement('template');
     const freeFeatureFragment = document.createElement('template');
     const featuresFragment = document.createElement('template');
-    
+
     let featuresFragmentHTML = ''
     let featuresListFragmentHTML = '';
     let freeFeatureFragmentHTML = '';
@@ -301,7 +301,7 @@
       }
 
       featuresFragmentHTML += `<li><input data-feature='${featureName}' type='checkbox' id='${featureName}chk'/><label for='${featureName}chk' style='background-color: hsla(${Math.round(difference)}, 100%, 42%, 1)'>${title} <span class=featpct>(${difference.toFixed(0)}%)</span></label>`;
-      
+
     }
 
     featuresFragment.innerHTML = featuresFragmentHTML;
