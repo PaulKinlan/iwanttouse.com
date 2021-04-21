@@ -2,10 +2,17 @@ const intersectionOf = (arrays) => {
   if (arrays.length == 1) return [...new Set(arrays[0])];
   if (arrays.length < 2) throw "not enough inputs";
   
-  const output = new Set();
+  arrays.sort((a,b) => {
+    if (a.length > b.length) return 1;
+    if (a.length < b.length) return -1;
+    return 0
+  });
+  
+  const output = new Set(arrays[0]);
   for(let i = 1; i < arrays.length; i++) {
-    for(let item of arrays[i-1]) {
-      if(arrays[i].indexOf(item) > -1) output.add(item);
+    const values = output.values();
+    for(let val of values) {
+      if(arrays[i].indexOf(val) == -1) output.delete(val); 
     }
   }
 
