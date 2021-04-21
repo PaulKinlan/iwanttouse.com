@@ -127,14 +127,8 @@ class Browsers {
     }
 
     let browser_vers = intersectionOf(Object.values(output));
-    let aggregates = groupBy(browser_vers, (i) => {
-      return this.getBrowser(i).name;
-    });
-
     return browser_vers
       .map((i) => this.getBrowser(i));
-
-
   }
 
   browsersByFeature(features, states) {
