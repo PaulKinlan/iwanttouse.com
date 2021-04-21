@@ -118,6 +118,8 @@ class Browsers {
         for (let b in feature.stats) {
           for (let v in feature.stats[b]) {
             let present = feature.stats[b][v];
+            // remove notes
+            present = present.replace(/ \#.*/, '');
             if (states.indexOf(present) > -1) {
               output[featureName].push(b + "+" + v);
             }
