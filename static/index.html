@@ -272,7 +272,7 @@
     freeListElement.innerHTML = "";
     featuresElement.innerHTML = "";
 
-    const featuresListFragment = document.createElement('template');
+    const featuresDataListFragment = document.createElement('template');
     const freeFeatureFragment = document.createElement('template');
     const featuresFragment = document.createElement('template');
 
@@ -281,7 +281,7 @@
     let freeFeatureFragmentHTML = '';
 
     featuresFragment.innerHTML = '';
-    featuresListFragment.innerHTML = '';
+    featuresDataListFragment.innerHTML = '';
     freeFeatureFragment.innerHTML = '';
 
     for (let [featureName, feature] of features) {
@@ -307,12 +307,12 @@
     }
 
     featuresFragment.innerHTML = featuresFragmentHTML;
-    featuresListFragment.innerHTML = featuresFragmentHTML;
+    featuresDataListFragment.innerHTML = featuresListFragmentHTML;
     freeFeatureFragment.innerHTML = freeFeatureFragmentHTML;
 
 
     featuresElement.appendChild(featuresFragment.content);
-    featureListElement.appendChild(featuresListFragment.content);
+    featureListElement.appendChild(featuresDataListFragment.content);
     freeListElement.appendChild(freeFeatureFragment.content);
   };
 
