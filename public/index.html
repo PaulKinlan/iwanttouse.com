@@ -351,7 +351,7 @@
         drawTable("#totalShare", ["name", "since", "share"], supportedBy);
 
         var mobileDesktopSplitData = browserStats.typesByFeature(requiredFeatures, ["y", "y x", "a", "a x"]);
-        drawTable("#mobileDesktopSplit", ["name", "share"], mobileDesktopSplitData);
+        drawTable("#mobileDesktopSplit", ["device", "share"], mobileDesktopSplitData);
       };
 
       var updateHeader = function (requiredFeatures) {
