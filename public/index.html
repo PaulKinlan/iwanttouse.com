@@ -4,6 +4,7 @@
 <head>
   <title>I want to use</title>
   <link rel="stylesheet" href="components/bootstrap.css/css/bootstrap.min.css">
+  <meta name="description" content="A web development tool to help you understand how the API choices you make will impact your addressable user audience.">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <style>
     html {
@@ -249,7 +250,7 @@
 
     <section>
       <h3>Features you can use</h3>
-      <p>When considering the <span>XX%</span> of people using the web, 
+      <p>When considering the <span id="userShare">XX%</span> of people using the web, 
         they are using browsers that also support the following features:</p>
       <ul id="free"></ul>
     </section>
@@ -340,6 +341,7 @@
 
 
         $("#share").css({ "color": "hsla(" + Math.round((90 / 100) * (sum / totalSum * 100)) + ", 100%, 42%, 1)" }).text((sum / totalSum * 100).toFixed(2));
+        $("#userShare").text((sum / totalSum * 100).toFixed(2));
         $("#unuseableShare").css({ "color": "hsla(" + Math.round(100 - (90 / 100) * (sum / totalSum * 100)) + ", 100%, 42%, 1)" }).text((100 - (sum / totalSum * 100)).toFixed(2));
 
         bindFeatureDataList(features, requiredFeatures, sum)
