@@ -216,7 +216,7 @@
 
   <div id="result" class="all">
     <section class="hero-unit">
-      <h2 id="usedFeatures">If you make a page that requires<ul></ul>
+      <h2 id="usedFeatures">If you make a page that requires: <ul></ul>
       </h2>
       <h1><span id="share">100</span>% of <span id="usertype">all</span> web users can use your site</h1>
       <h2><span id="unuseableShare">0</span>% will not be able to use your site without polyfills</h2>
@@ -250,7 +250,7 @@
 
     <section>
       <h3>Features you can use</h3>
-      <p>When considering the <span id="userShare">XX%</span> of people using the web, 
+      <p>When considering the <span id="userShare"></span>% of people who use a browser that can handle <span id="usedFeaturesSpan"></span>; 
         they are using browsers that also support the following features:</p>
       <ul id="free"></ul>
     </section>
@@ -354,13 +354,19 @@
 
       var updateHeader = function (requiredFeatures) {
         if (!!requiredFeatures === false || requiredFeatures.length === 0) {
-          $("#usedFeatures ul").html("nothing special");
+          $("#usedFeatures ul").html("Nothing special");
+          $("#usedFeaturesSpan").html("Nothing special");
         }
         else {
           $("#usedFeatures ul").html(requiredFeatures.map((i) => {
             var item = browserStats.getFeature(i);
             return "<li><input data-feature='" + item.id + "' type='checkbox' id='" + item.id + "usedchk'/><label for='" + item.id + "usedchk'>" + item.title + "</label>"
           }).join(""));
+
+          $("#usedFeaturesSpan").html(requiredFeatures.map((i) => {
+            var item = browserStats.getFeature(i);
+            return item.title;
+          }).join(","));
         }
       };
 
