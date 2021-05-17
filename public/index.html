@@ -250,7 +250,7 @@
 
     <section>
       <h3>Features you can use</h3>
-      <p>When considering the <span id="userShare"></span>% of people who use a browser that can handle <span id="usedFeaturesSpan"></span>; 
+      <p>When considering the <span id="userShare"></span>% of people who use a browser that can handle <codee id="usedFeaturesSpan"></code>; 
         they are using browsers that also support the following features:</p>
       <ul id="free"></ul>
     </section>
@@ -366,7 +366,7 @@
           $("#usedFeaturesSpan").html(requiredFeatures.map((i) => {
             var item = browserStats.getFeature(i);
             return item.title;
-          }).join(","));
+          }).join(", "));
         }
       };
 
