@@ -298,7 +298,7 @@
       let actual = sumCurrent - sum;
       let title = feature.title;
 
-      featuresListFragmentHTML += `<option value='${featureName}'>${difference.toFixed(2)}%</option>`;
+      featuresListFragmentHTML += `<option value='${featureName}'>${title} - ${difference.toFixed(2)}%</option>`;
       if (Math.round(100 - difference) === 0) {
         freeFeatureFragmentHTML += `<li data-share='${sum}'>
           <input 
@@ -340,7 +340,6 @@
 
         let sum = supportedBy.reduce((memo, num) => memo + num.share, 0);
         let totalSum = statsForAllFeatures.reduce((memo, num) => memo + num.share, 0);
-
 
         $("#share").css({ "color": "hsla(" + Math.round((90 / 100) * (sum / totalSum * 100)) + ", 100%, 42%, 1)" }).text((sum / totalSum * 100).toFixed(2));
         $("#userShare").text((sum / totalSum * 100).toFixed(2));
