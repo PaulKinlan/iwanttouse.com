@@ -438,7 +438,7 @@
           if (col === "share")
             return { column: col, value: row[col].toFixed(3) + "%" };
           else if (col === "device")
-            return { column: col, value: "<a href='on" + row["name"] + ".iwanttouse.com/'>" + row["name"] + "</a>" };
+            return { column: col, value: "<a href='https://on" + row["name"] + ".iwanttouse.com/'>" + row["name"] + "</a>" };
           else
             return { column: col, value: row[col] };
         })
