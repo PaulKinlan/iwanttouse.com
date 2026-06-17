@@ -1,454 +1,86 @@
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
-  <title>I want to use</title>
-  <link rel="stylesheet" href="components/bootstrap.css/css/bootstrap.min.css">
-  <meta name="description" content="A web development tool to help you understand how the API choices you make will impact your addressable user audience.">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" type="image/png" href="./favicon.png"/>
-
-  <style>
-    html {
-      background-image: url('/images/lightpaperfibers.png');
-      background-repeat: repeat;
-      margin: 0 1em;
-    }
-
-    body {
-      background-color: transparent;
-      color: black;
-    }
-
-    header {
-      padding: 20px;
-      margin-top: 50px;
-      font-weight: 400;
-    }
-
-    #addfeatures {
-      clear: both;
-      padding: 0px;
-      margin-top: 30px;
-    }
-
-    header h1 {
-      font-weight: 400;
-      font-size: 4em;
-    }
-
-    .hero-unit {
-      padding: 30px;
-    }
-
-    ul {
-      margin: 0 0 0 1em;
-    }
-
-    #usedFeatures ul li,
-    ul#free li,
-    #features li {
-      list-style: none;
-      float: left;
-      color: white;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
-    }
-
-    #usedFeatures ul li label,
-    ul#free li label,
-    ul#features li label {
-      padding: 5px;
-      margin: 5px;
-      cursor: pointer;
-      -webkit-transition: all 0.2s ease-in-out;
-      transition: all 0.2s ease-in-out;
-    }
-
-    #usedFeatures {
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    #usedFeatures ul {
-      display: inline-block;
-      margin-left: 1ch;
-    }
-
-    #usedFeatures ul li label {
-      background-color: hsl(200, 100%, 42%);
-      outline: none;
-      color: white !important;
-    }
-
-    #usedFeatures ul li input[type=checkbox],
-    ul#free li input[type=checkbox],
-    ul#features input[type=checkbox] {
-      display: none;
-    }
-
-    input[type=checkbox]:checked+label {
-      background-color: hsl(200, 100%, 42%) !important;
-      box-shadow: inset 0px 0px 3px black;
-    }
-
-    thead {
-      text-transform: capitalize;
-    }
-
-    td {
-      padding: 5px;
-    }
-
-    td.versions {
-      word-break: break-all;
-    }
-
-    h2,
-    h3 {
-      clear: both;
-    }
-
-    input[type=search] {
-      font-size: 3em;
-      width: 100%;
-      height: 1.2em;
-      line-height: 1.2em;
-      box-sizing: border-box;
-    }
-
-    #share {
-      color: hsla(90, 100%, 42%, 1);
-    }
-
-    #mobileDesktopSplit {
-      float: left;
-    }
-
-    #totalShare {
-      float: left;
-    }
-
-    @media all and (max-width:650px) {
-
-      /*  Mobile */
-      html {
-        background-color: white;
-        margin: 0 5px 0 5px;
-      }
-
-      #addfeatures {
-        display: none;
-      }
-
-      input[type=search] {
-        font-size: 4em;
-        line-height: 1.0em;
-        display: none;
-        /* until I sort out data lists */
-      }
-
-      ul {
-        -webkit-column-count: 2;
-        -moz-column-count: 2;
-        column-count: 2;
-      }
-
-      #usedFeatures ul {
-        display: block;
-        -webkit-column-count: 0;
-        -moz-column-count: 0;
-        column-count: 0;
-      }
-
-      ul li {
-        width: 100%;
-      }
-
-      ul li label {
-        padding: 10px;
-        font-size: 18px;
-        word-break: break-all;
-      }
-
-      #mobileDesktopSplit {
-        float: none;
-      }
-
-      #totalShare {
-        float: none;
-      }
-
-      table {
-        margin: auto;
-      }
-
-      svg {
-        margin: auto;
-      }
-
-      #mobileDesktopSplitChart {
-        float: none;
-        margin: auto;
-        text-align: center;
-      }
-
-      #totalShareChart {
-        float: none;
-        margin: auto;
-        text-align: center;
-      }
-    }
-
-    #charts.all .all {
-      display: block;
-    }
-
-    #charts.desktop .all {
-      display: none;
-    }
-
-    #charts.mobile .all {
-      display: none;
-    }
-  </style>
-
+  <meta name="color-scheme" content="light dark">
+  <title>I want to use…</title>
+  <meta name="description"
+    content="Pick the web features you want to use and see their Baseline status and the share of users who can use your site.">
+  <link rel="shortcut icon" type="image/png" href="./favicon.png">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-
-  <div id="result" class="all">
-    <section class="hero-unit">
-      <h2 id="usedFeatures">If you make a page that requires: <ul></ul>
-      </h2>
-      <h1><span id="share">100</span>% of <span id="usertype">all</span> web users can use your site</h1>
-      <h2><span id="unuseableShare">0</span>% will not be able to use your site without polyfills</h2>
-
-      <div id="addfeatures">
-        <input id="search" type="search" list="featureList" placeholder="Add a feature">
-        <datalist id="featureList"> </datalist>
+  <div class="wrap">
+    <header>
+      <h1>I want to use…</h1>
+      <p>Pick the web features you want to use. See their <strong>Baseline</strong> status and the share of
+        <span id="usertype">all</span> users who can use your site.</p>
+      <div class="search">
+        <input id="search" type="search" list="featureList" placeholder="Add a feature — try “grid” or “:has()”"
+          autocomplete="off" aria-label="Add a feature">
+        <datalist id="featureList"></datalist>
       </div>
-      <br />
-      <p stlye="clear:both;">Powered by data from <a href="http://caniuse.com/">caniuse.com</a></p>
+    </header>
+
+    <section class="hero" aria-live="polite">
+      <div class="requires">If you make a page that requires:
+        <ul id="usedFeatures"><li class="muted">Nothing special yet — add a feature above.</li></ul>
+      </div>
+
+      <div class="headline">
+        <span class="pct" id="share">100</span>
+        <span class="pct-label">of <strong id="usertype2">all</strong> users can use your site.</span>
+        <span class="baseline baseline-big none" id="baselineChip">Baseline: pick a feature</span>
+      </div>
+      <p class="unusable"><span id="unusableShare">0</span>% would need a fallback or polyfill.</p>
+
+      <div class="charts">
+        <div>
+          <h2>Device split</h2>
+          <p>Share of all users that can use your features, by device.</p>
+          <div id="deviceSplit"></div>
+        </div>
+        <div>
+          <h2>Browser support</h2>
+          <p>Minimum version of each engine your selection needs.</p>
+          <div id="browserShare"></div>
+        </div>
+      </div>
     </section>
 
     <section>
-      <div id="charts">
-        <h2 class="all">Device type split</h2>
-        <p class="all">The ratio of the web that can use your chosen features split by Desktop and Mobile</p>
-        <div id="mobileDesktopSplit" class="all">
-          <p>Choose some features.</p>
-        </div>
-        <div id="mobileDesktopSplitChart" class="all">
-        </div>
-        <h2>Browser share</h2>
-        <p>The ratio of the entire web that can use your selected features aggregated by browser</p>
-        <div id="totalShare">
-          <p>Choose some features.</p>
-        </div>
-        <div id="totalShareChart">
-        </div>
-      </div>
+      <h2>Features you can also use for free</h2>
+      <p class="muted">The browsers that already support your selection also support these without a polyfill.</p>
+      <ul class="free-list" id="freeList">
+        <li class="muted">Select some features to see what comes for free.</li>
+      </ul>
     </section>
 
     <section>
-      <h3>Features you can use</h3>
-      <p>When considering the <span id="userShare"></span>% of people who use a browser that can handle <codee id="usedFeaturesSpan"></code>; 
-        their browsers also support the following features without polyfills:</p>
-      <ul id="free"></ul>
+      <h2>All web features</h2>
+      <p class="muted">Each chip shows its Baseline status and the audience you'd keep if you added it to your
+        current selection.</p>
+      <div class="filters" id="filters">
+        <button data-filter="all" aria-pressed="true">All</button>
+        <button data-filter="widely">● Widely available</button>
+        <button data-filter="newly">● Newly available</button>
+        <button data-filter="limited">● Limited</button>
+      </div>
+      <ul class="feature-grid" id="features"></ul>
     </section>
+
+    <footer>
+      <p>Baseline &amp; browser-support data from
+        <a href="https://github.com/web-platform-dx/web-features">web-features</a>; usage share from
+        <a href="https://caniuse.com/">caniuse.com</a>. Percentages cover the major browser engines
+        (Chrome, Edge, Firefox, Safari, and their mobile builds).</p>
+    </footer>
   </div>
-  <h2>All Browser Features</h2>
-  <p>Select a range of Browser features that you would like to use in your app</p>
-  <ul id="features"></ul>
+
+  <script type="module" src="js/app.js"></script>
 </body>
-<script src="browser-stats.js"></script>
-<script src="components/d3/d3.v2.min.js"></script>
-<script src="components/jquery/jquery.min.js"></script>
-<script>
-
-  let browserStats;
-
-  var bindFeatureDataList = function (features, required, sumCurrent) {
-    const supportedByCurrent = browserStats.browsersByFeature(required, ["y", "y x", "a", "a x"]);
-
-    const featureListElement = document.getElementById("featureList");
-    const featuresElement = document.getElementById("features");
-    const freeListElement = document.getElementById("free");
-    featureListElement.innerHTML = "";
-    freeListElement.innerHTML = "";
-    featuresElement.innerHTML = "";
-
-    const featuresDataListFragment = document.createElement('template');
-    const freeFeatureFragment = document.createElement('template');
-    const featuresFragment = document.createElement('template');
-
-    let featuresFragmentHTML = ''
-    let featuresListFragmentHTML = '';
-    let freeFeatureFragmentHTML = '';
-
-    featuresFragment.innerHTML = '';
-    featuresDataListFragment.innerHTML = '';
-    freeFeatureFragment.innerHTML = '';
-
-    for (let [featureName, feature] of features) {
-      // This individual feature + other required features.
-      let supportedBy = browserStats.browsersByFeature(required.concat(featureName), ["y", "y x", "a", "a x"]);
-      let sum = supportedBy.reduce((memo, num) => memo + num.share, 0);
-      let difference = (sum / sumCurrent) * 100;
-      let actual = sumCurrent - sum;
-      let title = feature.title;
-
-      featuresListFragmentHTML += `<option value='${featureName}'>${title} - ${difference.toFixed(2)}%</option>`;
-      if (Math.round(100 - difference) === 0) {
-        freeFeatureFragmentHTML += `<li data-share='${sum}'>
-          <input 
-          data-difference='${difference}' 
-          data-feature='${featureName}' 
-          type='checkbox' id='${featureName}freechk'/>
-          <label for='${featureName}freechk' style='background-color: hsla(${Math.round(difference)}, 100%, 42%, 1)'>${title} <span class=featpct></span></label>`;
-      }
-
-      featuresFragmentHTML += `<li><input data-feature='${featureName}' type='checkbox' id='${featureName}chk'/><label for='${featureName}chk' style='background-color: hsla(${Math.round(difference)}, 100%, 42%, 1)'>${title} <span class=featpct>(${difference.toFixed(0)}%)</span></label>`;
-
-    }
-
-    featuresFragment.innerHTML = featuresFragmentHTML;
-    featuresDataListFragment.innerHTML = featuresListFragmentHTML;
-    freeFeatureFragment.innerHTML = freeFeatureFragmentHTML;
-
-
-    featuresElement.appendChild(featuresFragment.content);
-    featureListElement.appendChild(featuresDataListFragment.content);
-    freeListElement.appendChild(freeFeatureFragment.content);
-  };
-
-  $(function () {
-    var deviceType = "all";
-    deviceType = window.location.host.indexOf("onmobile") == 0 ? "mobile" : deviceType;
-    deviceType = window.location.host.indexOf("ondesktop") == 0 ? "desktop" : deviceType;
-    $("#charts").addClass(deviceType);
-    $("#usertype").text(deviceType);
-
-    BrowserStats.load(deviceType).then(browsers => {
-      browserStats = browsers;
-      let features = Object.entries(browsers.features);
-      features.sort(([key1, value], [key2, value2]) => key1.localeCompare(key2));
-      let updateShare = function (requiredFeatures) {
-        if (!!requiredFeatures === false) return;
-        let statsForAllFeatures = browserStats.browsersByFeature([], ["y", "y x", "a", "a x"]);
-        let supportedBy = browserStats.browsersByFeature(requiredFeatures, ["y", "y x", "a", "a x"]);
-
-        let sum = supportedBy.reduce((memo, num) => memo + num.share, 0);
-        let totalSum = statsForAllFeatures.reduce((memo, num) => memo + num.share, 0);
-
-        $("#share").css({ "color": "hsla(" + Math.round((90 / 100) * (sum / totalSum * 100)) + ", 100%, 42%, 1)" }).text((sum / totalSum * 100).toFixed(2));
-        $("#userShare").text((sum / totalSum * 100).toFixed(2));
-        $("#unuseableShare").css({ "color": "hsla(" + Math.round(100 - (90 / 100) * (sum / totalSum * 100)) + ", 100%, 42%, 1)" }).text((100 - (sum / totalSum * 100)).toFixed(2));
-
-        bindFeatureDataList(features, requiredFeatures, sum)
-        // Version numbers aren't that interesting here.
-        drawTable("#totalShare", ["name", "since", "share"], supportedBy);
-
-        var mobileDesktopSplitData = browserStats.typesByFeature(requiredFeatures, ["y", "y x", "a", "a x"]);
-        drawTable("#mobileDesktopSplit", ["device", "share"], mobileDesktopSplitData);
-      };
-
-      var updateHeader = function (requiredFeatures) {
-        if (!!requiredFeatures === false || requiredFeatures.length === 0) {
-          $("#usedFeatures ul").html("Nothing special");
-          $("#usedFeaturesSpan").html("Nothing special");
-        }
-        else {
-          $("#usedFeatures ul").html(requiredFeatures.map((i) => {
-            var item = browserStats.getFeature(i);
-            return "<li><input data-feature='" + item.id + "' type='checkbox' id='" + item.id + "usedchk'/><label for='" + item.id + "usedchk'>" + item.title + "</label>"
-          }).join(""));
-
-          $("#usedFeaturesSpan").html(requiredFeatures.map((i) => {
-            var item = browserStats.getFeature(i);
-            return item.title;
-          }).join(", "));
-        }
-      };
-
-      $("input[type=checkbox]").live('change', function () {
-        var featureName = $(this).data("feature");
-        var checked = $(this).prop("checked");
-
-        // toggle all the other checkboxes for the same feature 
-        $("input[data-feature='" + featureName + "']").prop("checked", (checked) ? "checked" : false);
-
-        let featureList = [... new Set(Array.from($("input:checked")).map((val) => $(val).data("feature")))];
-        window.location.hash = featureList.join(",");
-      });
-
-      window.addEventListener("hashchange", function () {
-        var urlFeats = getFeatureArrayFromString(window.location.hash.substring(1));
-        updateShare(urlFeats);
-        updateHeader(urlFeats);
-        $(urlFeats.map((f) => "input[data-feature='" + f + "']").join()).prop("checked", "checked");
-      });
-
-      var urlFeats = getFeatureArrayFromString(window.location.hash.substring(1));
-      updateShare(urlFeats);
-      updateHeader(urlFeats);
-      $(urlFeats.map((f) => "input[data-feature='" + f + "']").join()).prop("checked", "checked");
-
-      $("#search").on('change', function () {
-        if (this.value === "") return;
-        var urlFeats = getFeatureArrayFromString(window.location.hash.substring(1));
-        urlFeats.push(this.value);
-        $(urlFeats.map((f) => "input[data-feature='" + f + "']").join()).prop("checked", "checked");
-        window.location.hash = $("input:checked").map(function (val, i) { return $(i).data("feature"); }).toArray().join(",");
-        this.value = ""
-      });
-    });
-  });
-
-  var getFeatureArrayFromString = function (str) {
-    var feats = str.split(",");
-    if (feats.length == 1 && feats[0] === "") return [];
-    return feats
-  };
-
-  var drawTable = function (element, columns, data) {
-
-    var table = d3.select(element).html("").append("table"),
-      thead = table.append("thead"),
-      tbody = table.append("tbody");
-
-    thead.append("tr")
-      .selectAll("th")
-      .data(columns)
-      .enter()
-      .append("th")
-      .text(function (col) {
-        return col;
-      });
-
-    var rows = tbody.selectAll("tr")
-      .data(data)
-      .enter()
-      .append("tr");
-
-    var cells = rows.selectAll('tr')
-      .data(function (row) {
-        return columns.map(function (col) {
-          if (col === "share")
-            return { column: col, value: row[col].toFixed(3) + "%" };
-          else if (col === "device")
-            return { column: col, value: "<a href='https://on" + row["name"] + ".iwanttouse.com/'>" + row["name"] + "</a>" };
-          else
-            return { column: col, value: row[col] };
-        })
-      })
-      .enter()
-      .append("td")
-      .classed("versions", function (d) { return d.column === "versions" })
-      .html(function (d) { return d.value; })
-
-  };
-</script>
-
 
 </html>

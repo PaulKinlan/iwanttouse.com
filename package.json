@@ -1,0 +1,15 @@
+{
+  "name": "iwanttouse.com",
+  "version": "2.0.0",
+  "description": "Pick web features and see their Baseline status and the share of users who can use your site.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-data.mjs",
+    "start": "npm run build && npx --yes serve public"
+  },
+  "dependencies": {
+    "caniuse-db": "^1.0.30001000",
+    "web-features": "^2.0.0"
+  }
+}
