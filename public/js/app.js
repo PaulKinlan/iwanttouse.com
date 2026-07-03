@@ -34,7 +34,10 @@ function renderHeadline(ids) {
   const pct = engine.audienceShare(ids, deviceType);
   const share = $("share");
   share.textContent = pct.toFixed(2);
-  share.style.color = `hsl(${hueFor(pct)} 65% 50%)`;
+  // Dark colour on the light surface, light colour on the dark surface, so the
+  // large figure clears 3:1 contrast in both themes (light-dark() resolves via
+  // the page's color-scheme declaration).
+  share.style.color = `light-dark(hsl(${hueFor(pct)} 65% 35%), hsl(${hueFor(pct)} 70% 60%))`;
   $("unusableShare").textContent = (100 - pct).toFixed(2);
 
   const chip = $("baselineChip");

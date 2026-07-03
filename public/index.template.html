@@ -5,6 +5,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f8fa">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#16181d">
+  <link rel="manifest" href="site.webmanifest">
   <title>I want to use…</title>
   <meta name="description"
     content="Pick the web features you want to use and see their Baseline status and the share of users who can use your site.">
@@ -21,7 +24,7 @@
       <div class="search">
         <input id="search" type="search" list="featureList" placeholder="Add a feature — try “grid” or “:has()”"
           autocomplete="off" aria-label="Add a feature">
-        <datalist id="featureList"></datalist>
+        <datalist id="featureList"><!--@prerender:datalist--><!--/@prerender:datalist--></datalist>
       </div>
     </header>
 
@@ -69,7 +72,7 @@
         <button data-filter="newly">● Newly available</button>
         <button data-filter="limited">● Limited</button>
       </div>
-      <ul class="feature-grid" id="features"></ul>
+      <ul class="feature-grid" id="features"><!--@prerender:features--><!--/@prerender:features--></ul>
     </section>
 
     <footer>
