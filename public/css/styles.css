@@ -247,7 +247,9 @@ section > h2 {
 .filters button[aria-pressed="true"] {
   background: var(--accent);
   border-color: var(--accent);
-  color: white;
+  /* The accent is a dark blue in light mode but a light blue in dark mode, so
+     the label text must flip to stay legible (4.5:1) in both schemes. */
+  color: light-dark(#fff, #0f1a2e);
 }
 
 .feature-grid {
@@ -313,6 +315,7 @@ section > h2 {
 .feature-grid .name {
   flex: 1;
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .feature-grid .pct {
@@ -337,7 +340,7 @@ section > h2 {
   border-radius: 999px;
   border: 1px solid var(--border);
   background: var(--accent);
-  color: white;
+  color: light-dark(#fff, #0f1a2e);
   cursor: pointer;
 }
 
@@ -377,4 +380,28 @@ footer {
   border-top: 1px solid var(--border);
   color: var(--text-dim);
   font-size: 0.9rem;
+}
+
+/* --- Preference & forced-colour support -------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  /* Keep the status dots and selected state meaningful when the user's
+     forced-colour palette overrides author colours. */
+  .feature-grid .dot,
+  .baseline::before {
+    forced-color-adjust: auto;
+  }
+  .feature-grid input:checked + label,
+  .filters button[aria-pressed="true"] {
+    outline: 2px solid Highlight;
+  }
 }

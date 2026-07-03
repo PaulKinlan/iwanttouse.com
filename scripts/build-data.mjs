@@ -11,6 +11,7 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { Engine } from "../public/js/audience.js";
 
 const require = createRequire(import.meta.url);
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -84,3 +85,74 @@ console.log(
   `Wrote ${Object.keys(features).length} features (${kb(features)} KB) and ` +
     `${Object.keys(usage).length} usage agents (${kb(usage)} KB) to public/data/`,
 );
+
+// --- prerender helpers --------------------------------------------------
+const BASELINE_CLASS = { high: "widely", low: "newly", false: "limited", undefined: "limited" };
+const baselineClassOf = (feature) => BASELINE_CLASS[String(feature?.baseline)] ?? "limited";
+
+const escapeHtml = (s) =>
+  String(s).replace(
+    /[&<>"']/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
+  );
+
+// Replaces the content between `<!--@name-->` and `<!--/@name-->` markers in
+// index.html. Idempotent: the hand-authored template keeps the markers, and each
+// build rewrites only the generated slice between them.
+function injectSlice(html, name, slice) {
+  const open = `<!--@${name}-->`;
+  const close = `<!--/@${name}-->`;
+  const re = new RegExp(`(${open.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})([\\s\\S]*?)(${close.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`);
+  if (!re.test(html)) throw new Error(`prerender markers for "${name}" not found in index.html`);
+  return html.replace(re, `$1${slice}$3`);
+}
+
+function prerenderIndex(root, features, usage) {
+  const engine = new Engine(features, usage);
+  const all = engine.allFeatures(); // [id, feature] sorted by name
+
+  // Initial grid = nothing selected; each chip shows that feature's standalone
+  // audience share. Mirrors app.js renderGrid() for the empty-selection state
+  // (no checked inputs, no --chip tint; CSS falls back to the surface colour).
+  const grid = all
+    .map(([id, f]) => {
+      const pct = engine.audienceShare([id], "all");
+      const cls = baselineClassOf(f);
+      const title = escapeHtml(f.description || f.name);
+      return `<li>
+        <input type="checkbox" id="f-${id}" data-feature="${id}">
+        <label for="f-${id}" title="${title}">
+          <span class="dot ${cls}"></span>
+          <span class="name">${escapeHtml(f.name)}</span>
+          <span class="pct">${pct.toFixed(0)}%</span>
+        </label>
+      </li>`;
+    })
+    .join("");
+
+  const labels = { widely: "Widely available", newly: "Newly available", limited: "Limited availability" };
+  const datalist = all
+    .map(([id, f]) => {
+      const pct = engine.audienceShare([id], "all");
+      return `<option value="${escapeHtml(f.name)}">${pct.toFixed(0)}% · ${labels[baselineClassOf(f)]}</option>`;
+    })
+    .join("");
+
+  const index = join(root, "public", "index.html");
+  // index.html is a build artifact generated from the hand-authored
+  // index.template.html (mirrors how public/data/ is generated + gitignored).
+  const template = join(root, "public", "index.template.html");
+  let html = readFileSync(template, "utf8");
+  html = injectSlice(html, "prerender:features", grid);
+  html = injectSlice(html, "prerender:datalist", datalist);
+  writeFileSync(index, html);
+  console.log(`Pre-rendered ${all.length} features into public/index.html (raw HTML now crawlable).`);
+}
+
+// --- index.html prerender ------------------------------------------------
+// The feature grid and search datalist are rendered client-side from JSON, so a
+// crawler that doesn't run JavaScript sees only a shell. Pre-render the initial
+// (nothing-selected) grid + datalist into public/index.html between markers, so
+// the feature names, Baseline status, and audience shares are present in the raw
+// HTML that search and AI crawlers ingest. app.js replaces this on hydration.
+prerenderIndex(root, features, usage);
